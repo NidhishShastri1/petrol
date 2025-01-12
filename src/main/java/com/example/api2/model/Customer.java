@@ -1,8 +1,9 @@
 package com.example.api2.model;
 
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document(collection = "customers")
 public class Customer {
@@ -13,6 +14,10 @@ public class Customer {
     private String mobileNumber;
     private String customerId; // Generated manually
     private String cardNumber; // Generated manually
+    private int points;
+
+    // A new field to keep track of purchased gifts
+    private List<String> purchasedGifts; 
 
     // Getters and Setters
     public String getId() {
@@ -54,6 +59,20 @@ public class Customer {
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public List<String> getPurchasedGifts() {
+        return purchasedGifts;
+    }
+
+    public void setPurchasedGifts(List<String> purchasedGifts) {
+        this.purchasedGifts = purchasedGifts;
+    }
 }
-
-
