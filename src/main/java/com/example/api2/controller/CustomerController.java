@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +23,7 @@ import com.example.api2.service.CustomerService;
 public class CustomerController {
 
     private final CustomerService customerService;
-
+    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
@@ -29,31 +31,28 @@ public class CustomerController {
     // Fetch Customer Details by Mobile Number (Existing)
     @PostMapping("/fetch")
     public ResponseEntity<Map<String, Object>> getCustomerDetails(
-            @RequestParam String mobileNumber) {
+            @RequestParam("mobileNumber") String mobileNumber) {
+        logger.info("Fetching customer details for mobileNumber: {}", mobileNumber);
 
-        Map<String, Object> response = new HashMap<>();
-
-        // Validate input
         if (mobileNumber == null || mobileNumber.length() != 10) {
-            response.put("status", "error");
-            response.put("message", "Valid mobile number is required.");
-            return ResponseEntity.badRequest().body(response);
+            return buildErrorResponse("Valid mobile number is required.", 400);
         }
 
-        // Fetch customer from database
         Optional<Customer> customer = customerService.getCustomerByMobileNumber(mobileNumber);
         if (customer == null) {
-            response.put("status", "error");
-            response.put("message", "Customer not found.");
-            return ResponseEntity.badRequest().body(response);
+            logger.warn("Customer not found for mobileNumber: {}", mobileNumber);
+            return buildErrorResponse("Customer not found.", 404);
         }
 
-        // Return customer details
+        Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
         response.put("customer", customer);
-        return ResponseEntity.ok(response);
-    }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .body(response);
 
+
+    }
     // Generate Customer Details (For Generating Random Customer ID and Card Number)
     @PostMapping("/generate-customer-details")
     public ResponseEntity<Map<String, String>> generateCustomerDetails(
@@ -129,7 +128,7 @@ public class CustomerController {
      
 
     @PostMapping("/block-card")
-    public ResponseEntity<?> blockCard(@RequestParam String cardNumber, @RequestParam String mobileNumber) {
+    public ResponseEntity<?> blockCard(@RequestParam String cardNumber ) {
         Optional<Customer> customerOpt = customerService.getCustomerByCardNumber(cardNumber);
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
@@ -148,6 +147,23 @@ public class CustomerController {
                 return ResponseEntity.ok(updatedCustomer);
             }
             return ResponseEntity.status(404).body("Customer not found.");
+        }
+        private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, int statusCode) {
+            logger.error("Error response: {} (Status code: {})", message, statusCode);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", message);
+
+            return ResponseEntity.status(statusCode)
+                    .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                    .body(errorResponse);
+        }
+
+        private <T> ResponseEntity<T> buildSuccessResponse(T body) {
+            logger.info("Success response: {}", body);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                    .body(body);
         }
     }
 

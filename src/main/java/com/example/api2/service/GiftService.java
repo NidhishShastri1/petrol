@@ -117,4 +117,9 @@ public class GiftService {
             gift.setStock(gift.getNumberOfItems()); // Synchronize stock with numberOfItems
         }
     }
+
+	public int getPointsNeededForGift(int pointsNeeded) {
+		// TODO Auto-generated method stub
+		return Gift.pointsNeeded;
+	}
 }

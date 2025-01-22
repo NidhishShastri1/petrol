@@ -16,7 +16,11 @@ public interface CustomerRepository extends MongoRepository<Customer, String> {
 
     // Custom query to find a customer by customerName and mobileNumber
     Customer findByCustomerNameAndMobileNumber(String customerName, String mobileNumber);
-
+    // Custom query to find a customer by customerName
+    static Optional<Customer> findByCustomerName(String customerName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     // New custom query to find a customer by phone number
     Optional<Customer> findByMobileNumber(String mobileNumber);
 

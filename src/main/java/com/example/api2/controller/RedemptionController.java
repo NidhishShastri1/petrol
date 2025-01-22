@@ -44,20 +44,20 @@ public class RedemptionController {
         private GiftService GiftService;
 
 
+        // API to buy a gift
         @PostMapping("/buy")
-        public ResponseEntity<?> buyGift(@RequestParam("pointsNeeded") int pointsNeeded,
-                                         @RequestBody Redemption redemption) {
+        public ResponseEntity<?> buyGift(@RequestBody Redemption redemption) {
             try {
-                // Pass the necessary parameters to the service
-                RedemptionService redemptionService = new RedemptionService();
+                // Fetch the points needed for the gift from the database
+                int pointsNeeded = giftService.getPointsNeededForGift(redemption.getPointsUsed());
+
+                // Call the service layer to process the redemption
                 redemptionService.redeemGift(redemption.getCustomerId(), redemption.getGiftName(), pointsNeeded);
-                
                 return ResponseEntity.ok("Gift redeemed successfully.");
             } catch (Exception e) {
                 return ResponseEntity.badRequest().body("Error: " + e.getMessage());
             }
         }
-
 }
 
 
