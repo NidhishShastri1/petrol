@@ -32,7 +32,8 @@ public class GiftService {
     }
 
     // Fetch all available gifts in stock
-    public List<Gift> getAllGiftStock() {
+    @SuppressWarnings("unchecked")
+	public List<Gift> getAllGiftStock() {
         return giftRepository.findAll();
     }
 
@@ -106,7 +107,7 @@ public class GiftService {
             throw new RuntimeException("Gift not found: " + itemName);
         }
 
-        gift.setPointsNeeded(pointsRequired); // Update points required
+        gift.setPointsNeeded(); // Update points required
         synchronizeStock(gift); // Ensure stock is up to date
         giftRepository.save(gift);
     }
@@ -120,6 +121,6 @@ public class GiftService {
 
 	public int getPointsNeededForGift(int pointsNeeded) {
 		// TODO Auto-generated method stub
-		return Gift.pointsNeeded;
+		return pointsNeeded;
 	}
 }

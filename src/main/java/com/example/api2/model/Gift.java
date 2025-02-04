@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 	    private String itemName;
 	    private int numberOfItems;
 	    private LocalDate dateOfArrival;
-	    public static int pointsNeeded;
+	    private int pointsNeeded;
 	    private int stock;
 
 	    // Constructors, Getters, and Setters
@@ -57,8 +57,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 	        return pointsNeeded;
 	    }
 
-	    public void setPointsNeeded(int pointsNeeded) {
-	        this.pointsNeeded = pointsNeeded;
+	    public int setPointsNeeded() {
+	        return pointsNeeded;
 	    }
 	    public int getStock() {
 	        return stock;

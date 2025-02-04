@@ -3,6 +3,8 @@ package com.example.api2.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import com.example.api2.service.GiftService;
 @RestController
 @RequestMapping("/api/gifts")
 public class GiftController {
+	private static final Logger logger = LoggerFactory.getLogger(GiftController.class);
 
     @Autowired
     private GiftService giftService;
@@ -46,17 +49,19 @@ public class GiftController {
 
     // API to fetch gift stock
     @GetMapping("/stock")
-    public ResponseEntity<List<Gift>> getGiftStock() {
-        try {
-            // Fetch the list of all gift stocks from the service
-            List<Gift> giftStock = giftService.getAllGiftStock();
-
-            // Return the list of gift stock as a response
-            return ResponseEntity.ok(giftStock);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    public ResponseEntity<?> getGiftStock() {
+        logger.info("Fetching gift stock...");
+        List<Gift> stock = giftService.getAllGiftStock();
+        
+        if (stock.isEmpty()) {
+            logger.warn("No gift stock found!");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+
+        logger.info("Gift stock retrieved successfully.");
+        return ResponseEntity.ok(stock);
     }
+    
 
     // API to define points needed to redeem a gift
     @PostMapping(value = "/set-points", consumes = "multipart/form-data")
