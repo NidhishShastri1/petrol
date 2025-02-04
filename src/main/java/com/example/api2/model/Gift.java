@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 	    private String itemName;
 	    private int numberOfItems;
 	    private LocalDate dateOfArrival;
-	    private int pointsNeeded;
+	    public static int pointsNeeded;
 	    private int stock;
 
 	    // Constructors, Getters, and Setters
